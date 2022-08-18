@@ -1,36 +1,35 @@
-const { send_hello } = require("../players/controller");
-const { getTeams } = require("../teams/controller");
+const { getTeams, getTeamsById, deleteTeamById, createTeam, editTeam } = require("../teams/controller");
 
 const teamRoutes = [
   {
-    // used to retrieve a school by id
+    // used to retrieve a team by id
     path: "/teams/:teamId",
     method: "get",
-    handlers: [send_hello], // this list should contain any handles for this route. you can compose multiple handles to execute them in order.
+    handlers: [getTeamsById], // this list should contain any handles for this route. you can compose multiple handles to execute them in order.
   },
   {
-    // used to retrieve the list of schools
+    // used to retrieve the list of team
     path: "/teams",
     method: "get",
     handlers: [getTeams],
   },
   {
-    // used to create a new school
-    path: "/teams",
+    // used to create a new team
+    path: "/teams/create",
     method: "post",
-    handlers: [],
+    handlers: [createTeam],
   },
   {
-    // used to update a school
-    path: "/teams/:teamId",
+    // used to update a team
+    path: "/teams/:teamId/edit",
     method: "put",
-    handlers: [],
+    handlers: [editTeam],
   },
   {
-    // used to remove a school
-    path: "/teams/:teamId",
+    // used to remove a team
+    path: "/teams/:teamId/delete",
     method: "delete",
-    handlers: [],
+    handlers: [deleteTeamById],
   },
 ];
 
