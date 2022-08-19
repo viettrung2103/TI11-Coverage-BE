@@ -23,7 +23,7 @@ const getTeams = (req, res) => {
 };
 
 //get team by ID
-const getTeamsById = (req, res) => {
+const getTeamById = (req, res) => {
   const teamId = req.params.teamId;
 
 
@@ -64,7 +64,7 @@ const deleteTeamById = (req, res) => {
       connection.release(); // return connection to the pool after the query
 
       if (!err) {
-        res.send(`Team ${teamTagName} with the Record ID: ${teamId} is removed`);
+        res.send(`Team with the Record ID: ${teamId} is removed`);
       } else {
         console.log(err);
       }
@@ -72,7 +72,7 @@ const deleteTeamById = (req, res) => {
   })
 };
 //create new team
-const createTeam = (req, res) => {
+const  createTeam = (req, res) => {
   const teamId = req.params.teamId;
   
   poolService.getConnection((err, connection) => {
@@ -94,7 +94,7 @@ const createTeam = (req, res) => {
     console.log(req.body);
   })
 };
-
+//edit a Team - Put method
 const editTeam = (req, res) => {
 
   poolService.getConnection((err, connection) => {
@@ -119,7 +119,7 @@ const editTeam = (req, res) => {
       connection.release(); // return connection to the pool after the query
 
       if (!err) {
-        res.send(`Team ${teamName} is updated`);
+        res.send(`Team with ${teamName} is updated`);
       } else {
         console.log(err);
       }
@@ -131,7 +131,7 @@ const editTeam = (req, res) => {
 
 module.exports= {
   getTeams,
-  getTeamsById,
+  getTeamById,
   deleteTeamById,
   createTeam,
   editTeam,

@@ -1,11 +1,11 @@
-const { getTeams, getTeamsById, deleteTeamById, createTeam, editTeam } = require("../teams/controller");
+const { getTeams, getTeamById, deleteTeamById, createTeam, editTeam } = require("../teams/controller");
 
 const teamRoutes = [
   {
     // used to retrieve a team by id
     path: "/teams/:teamId",
     method: "get",
-    handlers: [getTeamsById], // this list should contain any handles for this route. you can compose multiple handles to execute them in order.
+    handlers: [getTeamById], // this list should contain any handles for this route. you can compose multiple handles to execute them in order.
   },
   {
     // used to retrieve the list of team

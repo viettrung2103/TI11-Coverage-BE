@@ -1,35 +1,35 @@
-const { send_hello } = require("./controller");
+const { getPlayerById, getPlayers, deletePlayerById, createPlayer, editPlayer } = require("./controller");
 
 const playerRoutes = [
   {
     // used to retrieve a student by id
     path: "/players/:playerId",
     method: "get",
-    handlers: [],
+    handlers: [getPlayerById],
   },
   {
     // used to retrieve the list of students
     path: "/players",
     method: "get",
-    handlers: [send_hello],
+    handlers: [getPlayers],
   },
   {
     // used to create a new student
-    path: "/players",
+    path: "/players/create",
     method: "post",
-    handlers: [],
+    handlers: [createPlayer],
   },
   {
     // used to update a student
-    path: "/players/:playerId",
+    path: "/players/:playerId/edit",
     method: "put",
-    handlers: [],
+    handlers: [editPlayer],
   },
   {
     // used to remove a student
-    path: "/students/:playerId",
+    path: "/players/:playerId/delete",
     method: "delete",
-    handlers: [],
+    handlers: [deletePlayerById],
   },
 ];
 
