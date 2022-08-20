@@ -50,7 +50,7 @@ const getTeamById = (req, res, next) => {
       res.json({
         status: 200,
         message: "Retrive Team Successfully",
-        lenght:data?.lenght,
+        length:data?.length,
         data: data,
       });
     })
