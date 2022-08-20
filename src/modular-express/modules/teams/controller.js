@@ -4,47 +4,55 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { PORT, DB_NAME } = require("../../../config");
 const { json } = require("body-parser");
+const AppError = require("../utils/appError");
+const { STATUS_CODES } = require("http");
 
 //get Team List
-const getTeams = (req, res) => {
+const getTeams = (req, res, next) => {
   poolService.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`connected as id ${connection.teamId}`)
 
-    connection.query('SELECT * from teams', (err,rows) => {
+    connection.query('SELECT * from teams', (err,data,fields) => {
       connection.release(); // return connection to the pool after the query
 
       if (!err) {
         res.set('Access-Control-Allow-Origin', 'http://localhost:8000');
-        resultObject = rows.map(v=> Object.assign({},v)) // to map mysql rows into an object with v value
-        res.json(resultObject);
+        // resultObject = rows.map(v=> Object.assign({},v)) // to map mysql rows into an object with v value
+        res.status(200);
+        res.json({
+          status:"success",
+          length: data?.length,
+          data: data,
+        });
       } else {
-        console.log(err);
+        return next(new AppError)
       }
     })
   })
 };
 
 //get team by ID
-const getTeamById = (req, res) => {
+const getTeamById = (req, res, next) => {
   const teamId = req.params.teamId;
 
-
   poolService.getConnection((err, connection) => {
-    if (err) throw err;
-    console.log(`connected as id ${connection.teamId}`)
+    //no ID found
+    if (!teamId) {
+      return next(new AppError("No Team found",404));
+    };
 
     //sql query
     // id = ? to prevent sql injection
-    connection.query('SELECT * from teams WHERE teamid = ?',[teamId], (err,rows) => {
+    connection.query('SELECT * from teams WHERE teamid = ?',[teamId], (err,data, fields) => {
       connection.release(); // return connection to the pool after the query
-
-      if (!err) {
-        resultObject = rows.map(v=> Object.assign({},v)) // to map mysql rows into an object with v value
-        res.json(resultObject);
-      } else {
-        console.log(err);
-      }
+      if (err) return next(new AppError(err,500));
+      res.status(200)
+      res.json({
+        status:"success",
+        lenght:data?.lenght,
+        data: data,
+      });
     })
   })
 };
@@ -76,39 +84,42 @@ const deleteTeamById = (req, res) => {
   })
 };
 //create new team
-const  createTeam = (req, res) => {
-  const teamId = req.params.teamId;
+const  createTeam = (req, res,next) => {
   
   poolService.getConnection((err, connection) => {
-    if (err) throw err;
+    if (!req.body) {
+      return next(AppError("No form data found",404))
+    };
     console.log(`Connecting to Pool at ${PORT}, accessed DB ${DB_NAME}`)
+    const values = [req.body.name,"pending"];
     
     const params = req.body; // a body of what client send to server
   
     // add ? to prevent sql injection
-    connection.query('INSERT INTO teams SET ?',params, (err,rows) => {
+    connection.query('INSERT INTO teams SET ?',params, (err,data, fields) => {
       connection.release(); // return connection to the pool after the query
-
-      if (!err) {
-        res.send(`Team ${params.teamName} is added`);
-      } else {
-        console.log(err);
-      }
+      //if fail
+      if (err) return next(new AppError(err,500));
+      //if success create
+      res.status(201);
+      res.json({
+        status: "Created",
+        messsage:`Team ${params.tag} is created`,
+      })
     })
-    console.log(req.body);
   })
 };
 //edit a Team - Put method
 const editTeam = (req, res) => {
 
   poolService.getConnection((err, connection) => {
-    if (err) throw err;
     console.log(`Connecting to Pool at ${PORT}, accessed DB ${DB_NAME}`)
+    
+    if (err) {
+      return next(new AppError ("No Team id is found",404))
+    };
 
     //destructure request body
-
-
-
     const {teamId, teamName, tag, region, wins, losses, imageUrl, createAt, lastMatchAt } = req.body
       
     // add ? to prevent sql injection
@@ -119,17 +130,19 @@ const editTeam = (req, res) => {
     connection.query(
       'UPDATE teams SET teamName = ?, tag = ?, region =?, wins = ?, losses = ?, imageUrl = ? WHERE teamId = ?',
       [teamName, tag, region, wins, losses, imageUrl, teamId], 
-      (err,rows) => {
+      (err, data, fields) => {
       connection.release(); // return connection to the pool after the query
 
-      if (!err) {
-        res.send(`Team with ${teamName} is updated`);
-      } else {
-        console.log(err);
-      }
+      //if error
+      if (err) return next(new AppError(err,500));
+      //if success
+      res.status(200);
+      res.json({
+        status:"success",
+        lenght: data?.length,
+        data:data,
+      })
     })
-
-    console.log(req.body);
   })
 };
 
