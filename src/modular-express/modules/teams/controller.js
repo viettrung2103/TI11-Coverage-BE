@@ -10,23 +10,22 @@ const { STATUS_CODES } = require("http");
 //get Team List
 const getTeams = (req, res, next) => {
   poolService.getConnection((err, connection) => {
-    if (err) throw err;
+    if (err) return next(new AppError(err));
     console.log(`connected as id ${connection.teamId}`)
-
+    // do querry
     connection.query('SELECT * from teams', (err,data,fields) => {
       connection.release(); // return connection to the pool after the query
-
+      // send res to client
       if (!err) {
-        res.set('Access-Control-Allow-Origin', 'http://localhost:8000');
+        // res.set('Access-Control-Allow-Origin', 'http://localhost:8000');
         // resultObject = rows.map(v=> Object.assign({},v)) // to map mysql rows into an object with v value
         res.status(200);
         res.json({
-          status:"success",
+          status: 200,
+          message: "Get Team List Successfully",
           length: data?.length,
           data: data,
         });
-      } else {
-        return next(new AppError)
       }
     })
   })
@@ -49,7 +48,8 @@ const getTeamById = (req, res, next) => {
       if (err) return next(new AppError(err,500));
       res.status(200)
       res.json({
-        status:"success",
+        status: 200,
+        message: "Retrive Team Successfully",
         lenght:data?.lenght,
         data: data,
       });
@@ -59,27 +59,31 @@ const getTeamById = (req, res, next) => {
 // delete team by ID
 const deleteTeamById = (req, res) => {
   const params = req.params;
-  console.log (params);
-
-
+  
+  
   const teamId = req.params.teamId;
   const teamTagName = req.params.tag;
-
+  
   poolService.getConnection((err, connection) => {
-
-    if (err) throw err;
     console.log(`Connecting to Pool at ${PORT}, accessed DB ${DB_NAME}`)
+    console.log("Retrieve Team ID...")
+    console.log (params);
+    if(!teamId) {
+      return next(new AppError("No Team id found"),404)
+    }
 
     //sql query
     // id = ? to prevent sql injection
-    connection.query('DELETE from teams WHERE teamId = ?',[teamId], (err,rows) => {
+    connection.query('DELETE from teams WHERE teamId = ?',[teamId], (err,fields) => {
       connection.release(); // return connection to the pool after the query
 
-      if (!err) {
-        res.send(`Team with the Record ID: ${teamId} is removed`);
-      } else {
-        console.log(err);
-      }
+      //if err
+      if (err) return next(new AppError(err,500));
+      res.status(201);
+      res.json({
+        status:"201",
+        message:"Delete team successfully!"
+      })
     })
   })
 };
@@ -103,8 +107,8 @@ const  createTeam = (req, res,next) => {
       //if success create
       res.status(201);
       res.json({
-        status: "Created",
-        messsage:`Team ${params.tag} is created`,
+        status: 201,
+        message: "Create Team Successfully",
       })
     })
   })
@@ -138,7 +142,8 @@ const editTeam = (req, res) => {
       //if success
       res.status(200);
       res.json({
-        status:"success",
+        status: 200,
+        message: "Edit Team Successfully",
         lenght: data?.length,
         data:data,
       })
