@@ -3,6 +3,7 @@ const mysql2 = require("mysql");
 const express = require("express");
 const bodyParser = require("body-parser");
 const { PORT, DB_NAME } = require("../../../config");
+const { json } = require("body-parser");
 
 //get Team List
 const getTeams = (req, res) => {
@@ -14,7 +15,9 @@ const getTeams = (req, res) => {
       connection.release(); // return connection to the pool after the query
 
       if (!err) {
-        res.send(rows);
+        res.set('Access-Control-Allow-Origin', 'http://localhost:8000');
+        resultObject = rows.map(v=> Object.assign({},v)) // to map mysql rows into an object with v value
+        res.json(resultObject);
       } else {
         console.log(err);
       }
@@ -37,7 +40,8 @@ const getTeamById = (req, res) => {
       connection.release(); // return connection to the pool after the query
 
       if (!err) {
-        res.send(rows);
+        resultObject = rows.map(v=> Object.assign({},v)) // to map mysql rows into an object with v value
+        res.json(resultObject);
       } else {
         console.log(err);
       }

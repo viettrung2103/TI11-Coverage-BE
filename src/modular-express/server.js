@@ -3,6 +3,7 @@ const { PORT } = require("../config");
 const APP_ROUTES = require("./modules/routes");
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
+const cors = require('cors');
 
 
 function initializeFramework() {
@@ -10,7 +11,9 @@ function initializeFramework() {
   const app = express(); // create a new express app
   app.use(bodyParser.urlencoded({extended:false}))
   app.use(bodyParser.json())
-
+  console.log("Enable Cors")
+  app.use(cors()); // enable cors
+  
   console.log("Initialize Routes");
   // retrieves the routes from the modules and define them in express app
   APP_ROUTES.forEach((route) => {
