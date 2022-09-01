@@ -11,19 +11,26 @@ const { STATUS_CODES } = require("http");
 const getTeams = (req, res, next) => {
   poolService.getConnection((err, connection) => {
     if (err) return next(new AppError(err));
-    console.log(`connected as id ${connection.teamId}`)
+    console.log(`Connecting to Database`)
     // do querry
     connection.query('SELECT * from teams', (err,data,fields) => {
-      connection.release(); // return connection to the pool after the query
+      // return connection to the pool after the query
+      connection.release();
+      console.log('Finish Query')
+      console.log('Release Connection')
       // send res to client
       if (!err) {
         // res.set('Access-Control-Allow-Origin', 'http://localhost:8000');
         // resultObject = rows.map(v=> Object.assign({},v)) // to map mysql rows into an object with v value
+
+        console.log('Get Team List Successfully')
         res.status(200);
         res.json({
-          status: 200,
-          message: "Get Team List Successfully",
-          length: data?.length,
+          info:{
+            status: 200,
+            message: "Get Team List Successfully",
+            length: data?.length,
+          },
           data: data,
         });
       }
@@ -48,9 +55,11 @@ const getTeamById = (req, res, next) => {
       if (err) return next(new AppError(err,500));
       res.status(200)
       res.json({
-        status: 200,
-        message: "Retrive Team Successfully",
-        length:data?.length,
+        info:{
+          status: 200,
+          message: "Retrive Team Successfully",
+          length:data?.length,      
+        },
         data: data,
       });
     })
@@ -81,8 +90,10 @@ const deleteTeamById = (req, res) => {
       if (err) return next(new AppError(err,500));
       res.status(201);
       res.json({
-        status:"201",
-        message:"Delete team successfully!"
+        info:{
+          status:"201",
+          message:"Delete team successfully!",
+        },
       })
     })
   })
@@ -107,8 +118,10 @@ const  createTeam = (req, res,next) => {
       //if success create
       res.status(201);
       res.json({
-        status: 201,
-        message: "Create Team Successfully",
+        info:{
+          status: 201,
+          message: "Create Team Successfully",
+        }
       })
     })
   })
@@ -142,9 +155,11 @@ const editTeam = (req, res) => {
       //if success
       res.status(200);
       res.json({
-        status: 200,
-        message: "Edit Team Successfully",
-        lenght: data?.length,
+        info:{
+          status: 200,
+          message: "Edit Team Successfully",
+          lenght: data?.length,
+        },
         data:data,
       })
     })
