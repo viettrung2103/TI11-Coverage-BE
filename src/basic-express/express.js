@@ -5,7 +5,7 @@ const app = express(); // creates an http server
 
 // we define routes in our server like this.
 app.get("/", (req, res) => {
-  res.send("Hello World!"); // we call this line to send the response back to the client.
+  res.send("Hello World! 3"); // we call this line to send the response back to the client.
 });
 
 // for each http method there a function with the same name in the `app` variable

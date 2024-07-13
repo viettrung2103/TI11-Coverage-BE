@@ -5,6 +5,7 @@ const AppError = require("../utils/appError")
 
 //get Player List
 const getPlayers = (req, res) => {
+  
   poolService.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`connected as id ${connection.playerId}`)

@@ -1,25 +1,25 @@
 const express = require("express");
-const { PORT } = require("../config");
+// const { PORT } = require("../config");
+const PORT = "8080";
 const APP_ROUTES = require("./modules/routes");
-const bodyParser = require('body-parser');
-const mysql = require('mysql2');
-const cors = require('cors');
-
+const bodyParser = require("body-parser");
+const mysql = require("mysql2");
+const cors = require("cors");
 
 function initializeFramework() {
   console.log("Initialize Server");
   const app = express(); // create a new express app
-  app.use(bodyParser.urlencoded({extended:false}))
-  app.use(bodyParser.json())
-  console.log("Enable Cors")
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
+  console.log("Enable Cors");
   // add cors origin: * or specific address to allow cors from specific website
   // add creditials: true to add cache
   app.use(
     cors({
-    origin: "http://localhost:4200",
+      origin: "http://localhost:4200",
     })
   ); // enable cors
-  
+
   console.log("Initialize Routes");
   // retrieves the routes from the modules and define them in express app
   APP_ROUTES.forEach((route) => {

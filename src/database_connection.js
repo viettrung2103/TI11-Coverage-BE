@@ -1,5 +1,11 @@
 const mysql = require("mysql2");
-const { DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD } = require("./config");
+const {
+  DB_HOST,
+  DB_NAME,
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_PORT,
+} = require("./config");
 
 /**
  * @property {mysql.Connection} _connection instance of the connection object with database.
@@ -11,6 +17,7 @@ class ApiService {
       user: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
+      port: DB_PORT,
     });
   }
 
@@ -48,18 +55,18 @@ class ApiService {
 }
 
 const poolService = mysql.createPool({
-  connectionLimit : 10,
-  host            : DB_HOST,
-  user            : DB_USERNAME,
-  password        : DB_PASSWORD,
-  database        : DB_NAME
+  connectionLimit: 10,
+  host: DB_HOST,
+  user: DB_USERNAME,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  port: DB_PORT,
 });
-
+console.log({ poolService });
 const apiService = new ApiService(); // initiate a api
 Object.freeze(apiService);
 
-
 module.exports = {
   apiService,
-  poolService
-}
+  poolService,
+};
